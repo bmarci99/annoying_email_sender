@@ -11,3 +11,11 @@ wheels/
 .env
 
 .idea/
+
+# Misc personal files
+misc/
+
+# Outputs (tracked selectively)
+outputs/*
+!outputs/history.json
+!outputs/.gitkeep

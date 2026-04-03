@@ -5,85 +5,88 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10-blue" />
   <img src="https://img.shields.io/badge/CI-GitHub_Actions-brightgreen?logo=githubactions" />
-  <img src="https://img.shields.io/badge/Scheduler-Weekly-orange" />
+  <img src="https://img.shields.io/badge/Scheduler-Daily-orange" />
   <img src="https://img.shields.io/badge/Status-Production-success" />
+  <img src="https://img.shields.io/badge/Employers-5-blueviolet" />
 </p>
 
-## 👀 What This Does
+# Swiss Jobs Tracker
 
-Every week it:
+Automated daily job monitoring for top Swiss and European employers. Tracks new postings at **Novartis**, **Sandoz**, **Roche**, **BIS**, and **ECB**, delivering HTML/Markdown digests via email and a GitHub Pages archive.
 
-* Scrapes some careers
-* Gets job detail pages
-* Converts HTML → Markdown
-* Builds a nicely formatted HTML digest
-* Sends an email
-
----
-
-## Locations Monitored
-Currently watching: 🇨🇭 🇩🇪 🇱🇺 🇲🇹🇶🇦🇨🇾
-
----
-
-## Stack
-
-* Python
-* `uv` for dependency management
-* `httpx`
-* `markdownify`
-* GitHub Actions (weekly scheduler)
-* Gmail SMTP (App Password)
-
----
-
-## How It Works
-
-```text
-main.py
- ├─ fetch listings
- ├─ create job folders
- ├─ convert HTML → markdown
- ├─ render HTML digest
- └─ (optional) send email
-```
-
-
----
-
-## Run It Locally
-
-Install dependencies:
+## Architecture
 
 ```
+config.yaml -> INGEST (5 scrapers) -> DIFF (history) -> RENDER (HTML/MD/JSON) -> DELIVER (email + archive)
+```
+
+## Employers
+
+| Employer | Strategy | Region |
+|----------|----------|--------|
+| **Novartis** | HTML scraping (paginated) | Switzerland |
+| **Sandoz** | HTML scraping (Drupal CMS) | Switzerland |
+| **Roche** | Workday JSON API + fallback HTML | Switzerland |
+| **BIS** | RSS feed | Basel |
+| **ECB** | HTML scraping | Frankfurt (all) |
+
+## Quick Start
+
+```bash
+# Install (requires uv)
 uv sync
+
+# Run pipeline (no email)
+uv run python -m jobs_tracker
+
+# Run with email delivery
+export GMAIL_ADDRESS="you@gmail.com"
+export GMAIL_APP_PASSWORD="your-app-password"
+uv run python -m jobs_tracker --send-email
 ```
 
-Run without email:
+## Configuration
+
+Edit `config.yaml` to enable/disable employers, adjust scraping limits, set history rolling window (default: 30 days), and configure output paths.
+
+## Outputs
+
+| File | Description |
+|------|-------------|
+| `outputs/digest.html` | Styled HTML email digest |
+| `outputs/digest.md` | Markdown summary |
+| `outputs/digest.json` | Machine-readable full data |
+| `outputs/history.json` | Rolling job history for diff |
+| `outputs/run_stats.json` | Pipeline execution stats |
+| `docs/` | GitHub Pages archive site |
+
+## GitHub Actions
+
+- **Daily** (Mon-Fri 07:00 CET) - scrape, diff, email if changes, commit archive
+- **Weekly** (Monday 08:00 CET) - full scan with forced email
+
+### Required Secrets
+
+| Secret | Description |
+|--------|-------------|
+| `GMAIL_ADDRESS` | Sender Gmail address |
+| `GMAIL_APP_PASSWORD` | Gmail App Password |
+| `GMAIL_TO` | Recipient email (defaults to sender) |
+
+## Tests
+
+```bash
+uv run pytest
+```
+
+## Project Structure
 
 ```
-uv run python main.py
+src/jobs_tracker/
+  main.py              # pipeline orchestrator
+  models.py            # Pydantic Job model
+  ingest/              # 5 employer scrapers
+  render/              # HTML, Markdown, archive site
+  delivery/            # Gmail SMTP
+  util/                # http client, history, logging
 ```
-
-Run + email yourself:
-
-```
-uv run python main.py --send-email
-```
-
----
-
-## Weekly Automation
-
----
-
-## Possible Upgrades
-
-
-* Only notify on new REQ IDs
-* Keyword filters (AI, SAP, Data, etc.)
-* Highlight new jobs
-* Send to Slack/Telegram
-* Track trends over time
-
----

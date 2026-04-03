@@ -1,0 +1,52 @@
+employers:
+  novartis:
+    enabled: true
+    base_url: "https://www.novartis.com/careers/career-search"
+    countries:
+      - "LOC_CH"
+    max_pages: 50
+
+  sandoz:
+    enabled: true
+    api_url: "https://sandoz-com.cms.sandoz.com/jsonapi/views/job_search/job_search"
+    country_tid: "986"  # Switzerland taxonomy term ID
+    max_pages: 50
+
+  roche:
+    enabled: true
+    careers_url: "https://roche.wd3.myworkdayjobs.com/en-US/roche-ext"
+    api_url: "https://roche.wd3.myworkdayjobs.com/wday/cxs/roche/roche-ext/jobs"
+    location_filter: "Switzerland"
+    limit: 200
+
+  bis:
+    enabled: true
+    rss_url: "https://www.bis.org/doclist/vacancies.rss"
+
+  ecb:
+    enabled: true
+    search_url: "https://talent.ecb.europa.eu/careers/SearchJobs"
+    base_url: "https://talent.ecb.europa.eu"
+
+history:
+  rolling_days: 30
+  path: "outputs/history.json"
+
+output:
+  dir: "outputs"
+  formats:
+    - html
+    - md
+    - json
+  archive: true
+  archive_dir: "docs"
+
+email:
+  send_on_empty: false
+  subject_prefix: "Swiss Jobs Tracker"
+
+http:
+  timeout_s: 30.0
+  max_retries: 3
+  backoff_factor: 1.0
+  user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"

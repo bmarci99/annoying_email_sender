@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Swiss Jobs Tracker — {{ date }}</title>
+  <style>
+    /* Reset */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #1a1a1a;
+      background: #f8f9fa;
+      line-height: 1.5;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      background: #fff;
+    }
+
+    /* Header */
+    .header {
+      border-bottom: 3px solid #0066cc;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0066cc;
+    }
+    .header .subtitle {
+      font-size: 14px;
+      color: #555;
+      margin-top: 4px;
+    }
+    .stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .stat-total { background: #e8f0fe; color: #1a56db; }
+    .stat-new   { background: #d1fae5; color: #065f46; }
+
+    /* Employer sections */
+    .employer-section {
+      margin-top: 28px;
+    }
+    .employer-header {
+      font-size: 18px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .employer-novartis .employer-header { background: #0460a9; color: #fff; }
+    .employer-sandoz   .employer-header { background: #eb6625; color: #fff; }
+    .employer-roche    .employer-header { background: #0066cc; color: #fff; }
+    .employer-bis      .employer-header { background: #003366; color: #fff; }
+    .employer-ecb      .employer-header { background: #003399; color: #fecb00; }
+
+    .location-group {
+      margin-left: 8px;
+      margin-bottom: 16px;
+    }
+    .location-group h3 {
+      font-size: 14px;
+      color: #555;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+
+    /* Job table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      text-align: left;
+      padding: 6px 8px;
+      background: #f1f3f5;
+      font-weight: 600;
+      font-size: 12px;
+      color: #444;
+      border-bottom: 2px solid #dee2e6;
+    }
+    td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #f1f3f5;
+      vertical-align: top;
+    }
+    tr:hover td { background: #f8f9fa; }
+
+    a { color: #0066cc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+    .badge-new      { background: #d1fae5; color: #065f46; }
+    .badge-deadline { background: #fef3c7; color: #92400e; }
+
+    .dept { color: #666; font-size: 12px; }
+    .date { color: #888; font-size: 12px; white-space: nowrap; }
+
+    /* Footer */
+    .footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 12px; }
+      .stats { flex-direction: column; gap: 6px; }
+      table { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🇨🇭 Swiss Jobs Tracker</h1>
+      <div class="subtitle">Daily digest — {{ date }}</div>
+      <div class="stats">
+        <span class="stat stat-total">{{ total }} jobs tracked</span>
+        {% if new_count > 0 %}
+        <span class="stat stat-new">+{{ new_count }} new</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% for employer, locations in grouped | dictsort %}
+    <div class="employer-section employer-{{ employer }}">
+      <div class="employer-header">
+        {{ employer | upper }}
+      </div>
+
+      {% for location, jobs in locations | dictsort %}
+      <div class="location-group">
+        <h3>📍 {{ location }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50%">Position</th>
+              <th>Department</th>
+              <th>Posted</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in jobs %}
+            <tr>
+              <td>
+                <a href="{{ job.url }}">{{ job.title }}</a>
+              </td>
+              <td class="dept">{{ job.department or '—' }}</td>
+              <td class="date">{{ job.posted_date or '—' }}</td>
+              <td>
+                {% if job.id in new_ids %}
+                  <span class="badge badge-new">🆕 NEW</span>
+                {% endif %}
+                {% if job.deadline and job.deadline <= deadline_soon %}
+                  <span class="badge badge-deadline">⏰ {{ job.deadline }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="footer">
+      Generated {{ date }} by Swiss Jobs Tracker · Novartis · Sandoz · Roche · BIS · ECB
+    </div>
+  </div>
+</body>
+</html>

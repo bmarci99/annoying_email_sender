@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Swiss Jobs Tracker</title>
+    <description>Daily job digests from top Swiss employers</description>
+    <link>https://github.com</link>
+    <lastBuildDate>Fri, 03 Apr 2026 20:04:54 +0000</lastBuildDate>
+    <item>
+      <title>Swiss Jobs Digest — 2026-04-03</title>
+      <link>2026-04-03.html</link>
+      <pubDate>2026-04-03</pubDate>
+    </item>
+  </channel>
+</rss>
