@@ -1,77 +1,128 @@
 <p align="center">
-  <img src="misc/me_rn.gif" width="300" />
+  <img src="misc/me_rn.gif" width="260" />
+</p>
+
+<h1 align="center">🇨🇭 Swiss Jobs Tracker</h1>
+
+<p align="center">
+  <strong>Automated weekly career monitoring for top Swiss &amp; European employers</strong><br/>
+  <sub>Scrapes · Diffs · Renders · Delivers — while you sleep</sub>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10-blue" />
-  <img src="https://img.shields.io/badge/CI-GitHub_Actions-brightgreen?logo=githubactions" />
-  <img src="https://img.shields.io/badge/Scheduler-Daily-orange" />
-  <img src="https://img.shields.io/badge/Status-Production-success" />
-  <img src="https://img.shields.io/badge/Employers-5-blueviolet" />
+  <img src="https://img.shields.io/badge/python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/CI-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" />
+  <img src="https://img.shields.io/badge/schedule-Monday_08%3A00_CET-FF6F00?style=for-the-badge&logo=clockify&logoColor=white" />
+  <img src="https://img.shields.io/badge/status-production-2E7D32?style=for-the-badge" />
 </p>
 
-# Swiss Jobs Tracker
+<p align="center">
+  <a href="https://bmarci99.github.io/annoying_email_sender/">📄 Live Archive</a> ·
+  <a href="#quick-start">🚀 Quick Start</a> ·
+  <a href="#how-it-works">⚙️ How It Works</a>
+</p>
 
-Automated daily job monitoring for top Swiss and European employers. Tracks new postings at **Novartis**, **Sandoz**, **Roche**, **BIS**, and **ECB**, delivering HTML/Markdown digests via email and a GitHub Pages archive.
+---
 
-## Architecture
+## What Is This?
+
+Every Monday morning, this pipeline wakes up, scrapes career pages at **5 major employers**, compares against last week's results, and sends a styled email digest + publishes an archive page. Zero manual effort.
+
+### Tracked Employers
+
+<table>
+  <tr>
+    <td align="center"><strong>💊 Novartis</strong><br/><sub>HTML scraping · paginated</sub><br/><code>Switzerland</code></td>
+    <td align="center"><strong>💊 Sandoz</strong><br/><sub>Drupal JSON API</sub><br/><code>Switzerland</code></td>
+    <td align="center"><strong>🧬 Roche</strong><br/><sub>Workday API + HTML fallback</sub><br/><code>Switzerland</code></td>
+    <td align="center"><strong>🏦 BIS</strong><br/><sub>RSS feed</sub><br/><code>Basel</code></td>
+    <td align="center"><strong>🏛️ ECB</strong><br/><sub>HTML scraping</sub><br/><code>Frankfurt</code></td>
+  </tr>
+</table>
+
+---
+
+## How It Works
 
 ```
-config.yaml -> INGEST (5 scrapers) -> DIFF (history) -> RENDER (HTML/MD/JSON) -> DELIVER (email + archive)
+┌─────────────┐     ┌───────────────┐     ┌──────────────┐     ┌────────────────────┐
+│  config.yaml │ ──▶ │  INGEST       │ ──▶ │  DIFF        │ ──▶ │  RENDER + DELIVER  │
+│              │     │  5 scrapers   │     │  vs history  │     │  HTML · MD · JSON  │
+│              │     │  (parallel)   │     │  new/removed │     │  email · GH Pages  │
+└─────────────┘     └───────────────┘     └──────────────┘     └────────────────────┘
 ```
 
-## Employers
+**Key features:**
+- 🔄 **30-day rolling history** — detects new & removed postings automatically
+- 📧 **Email digest** — styled HTML email via Gmail SMTP, only when there are changes
+- 🌐 **GitHub Pages archive** — browsable history + RSS feed
+- ⚡ **Fast & resilient** — async HTTP with retries, backoff, and per-scraper error isolation
+- 🛠️ **Fully configurable** — toggle employers, limits, output formats via `config.yaml`
 
-| Employer | Strategy | Region |
-|----------|----------|--------|
-| **Novartis** | HTML scraping (paginated) | Switzerland |
-| **Sandoz** | HTML scraping (Drupal CMS) | Switzerland |
-| **Roche** | Workday JSON API + fallback HTML | Switzerland |
-| **BIS** | RSS feed | Basel |
-| **ECB** | HTML scraping | Frankfurt (all) |
+---
 
 ## Quick Start
 
 ```bash
-# Install (requires uv)
+# 1. Install (requires uv)
 uv sync
 
-# Run pipeline (no email)
+# 2. Run the pipeline
 uv run python -m jobs_tracker
 
-# Run with email delivery
+# 3. (Optional) Run with email delivery
 export GMAIL_ADDRESS="you@gmail.com"
 export GMAIL_APP_PASSWORD="your-app-password"
 uv run python -m jobs_tracker --send-email
 ```
 
-## Configuration
-
-Edit `config.yaml` to enable/disable employers, adjust scraping limits, set history rolling window (default: 30 days), and configure output paths.
+---
 
 ## Outputs
 
-| File | Description |
-|------|-------------|
-| `outputs/digest.html` | Styled HTML email digest |
-| `outputs/digest.md` | Markdown summary |
-| `outputs/digest.json` | Machine-readable full data |
-| `outputs/history.json` | Rolling job history for diff |
-| `outputs/run_stats.json` | Pipeline execution stats |
-| `docs/` | GitHub Pages archive site |
+| File | What |
+|:-----|:-----|
+| `outputs/digest.html` | 📨 Styled email-ready digest |
+| `outputs/digest.md` | 📝 Markdown summary |
+| `outputs/digest.json` | 🔗 Machine-readable full data |
+| `outputs/history.json` | 🗂️ Rolling 30-day job history |
+| `outputs/run_stats.json` | 📊 Pipeline execution stats |
+| `docs/` | 🌐 GitHub Pages archive site |
 
-## GitHub Actions
+---
 
-- **Daily** (Mon-Fri 07:00 CET) - scrape, diff, email if changes, commit archive
-- **Weekly** (Monday 08:00 CET) - full scan with forced email
+## CI / CD
 
-### Required Secrets
+Fully automated via **GitHub Actions** — no human in the loop.
+
+| Workflow | Schedule | What it does |
+|:---------|:---------|:-------------|
+| **Weekly Full Scan** | Monday 08:00 CET | Scrape → diff → email → commit archive |
+
+<details>
+<summary><strong>Required Secrets</strong></summary>
 
 | Secret | Description |
-|--------|-------------|
+|:-------|:------------|
 | `GMAIL_ADDRESS` | Sender Gmail address |
 | `GMAIL_APP_PASSWORD` | Gmail App Password |
 | `GMAIL_TO` | Recipient email (defaults to sender) |
+
+</details>
+
+---
+
+## Project Structure
+
+```
+src/jobs_tracker/
+  ├── main.py           # pipeline orchestrator
+  ├── models.py         # Pydantic Job model
+  ├── ingest/           # 5 employer scrapers
+  ├── render/           # HTML, Markdown, archive site
+  ├── delivery/         # Gmail SMTP sender
+  └── util/             # http client, history, logging
+```
 
 ## Tests
 
@@ -79,14 +130,8 @@ Edit `config.yaml` to enable/disable employers, adjust scraping limits, set hist
 uv run pytest
 ```
 
-## Project Structure
+---
 
-```
-src/jobs_tracker/
-  main.py              # pipeline orchestrator
-  models.py            # Pydantic Job model
-  ingest/              # 5 employer scrapers
-  render/              # HTML, Markdown, archive site
-  delivery/            # Gmail SMTP
-  util/                # http client, history, logging
-```
+<p align="center">
+  <sub>Built with 🐍 Python · Automated with GitHub Actions · Delivered to your inbox</sub>
+</p>

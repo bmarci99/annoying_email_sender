@@ -34,22 +34,22 @@ class RocheIngester(BaseIngester):
             "careers_url",
             "https://roche.wd3.myworkdayjobs.com/en-US/roche-ext",
         )
-        location = self.cfg.get("location_filter", "Switzerland")
+        location_ids = self.cfg.get("location_ids", [])
         limit = self.cfg.get("limit", 200)
 
         # Try the Workday JSON API first
-        jobs = self._fetch_via_api(api_url, careers_url, location, limit)
+        jobs = self._fetch_via_api(api_url, careers_url, location_ids, limit)
         if jobs:
             return jobs
 
         # Fallback: scrape the HTML listing
         logger.info("Roche API unavailable, falling back to HTML scrape")
-        return self._fetch_via_html(careers_url, location)
+        return self._fetch_via_html(careers_url)
 
     # ---- primary: Workday JSON API ----------------------------------------
 
     def _fetch_via_api(
-        self, api_url: str, careers_base: str, location: str, limit: int
+        self, api_url: str, careers_base: str, location_ids: list, limit: int
     ) -> List[Job]:
         client = make_client(
             self.http_cfg,
@@ -63,7 +63,7 @@ class RocheIngester(BaseIngester):
         try:
             while offset < limit:
                 payload = {
-                    "appliedFacets": {"locationCountry": [location]},
+                    "appliedFacets": {"locations": location_ids} if location_ids else {},
                     "limit": page_size,
                     "offset": offset,
                     "searchText": "",

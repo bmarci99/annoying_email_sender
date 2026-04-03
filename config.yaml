@@ -16,7 +16,11 @@ employers:
     enabled: true
     careers_url: "https://roche.wd3.myworkdayjobs.com/en-US/roche-ext"
     api_url: "https://roche.wd3.myworkdayjobs.com/wday/cxs/roche/roche-ext/jobs"
-    location_filter: "Switzerland"
+    location_ids:  # Swiss cities on Workday
+      - "3543744a0e67010b8e1b9bd75b7637a4"  # Basel
+      - "3543744a0e67011e608a24f75b767ea5"  # Kaiseraugst
+      - "3543744a0e6701b53558a4195c761da7"  # Rotkreuz
+      - "3543744a0e6701c030e00e2b5b76a79b"  # Zurich
     limit: 200
 
   bis:
