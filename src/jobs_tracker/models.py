@@ -7,7 +7,7 @@ from typing import Literal, Optional
 from pydantic import BaseModel, HttpUrl
 
 
-Employer = Literal["novartis", "sandoz", "roche", "bis", "ecb"]
+Employer = Literal["novartis", "sandoz", "roche", "bis", "ecb", "eib"]
 
 
 class Job(BaseModel):

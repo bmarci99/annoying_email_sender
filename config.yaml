@@ -32,6 +32,10 @@ employers:
     search_url: "https://talent.ecb.europa.eu/careers/SearchJobs"
     base_url: "https://talent.ecb.europa.eu"
 
+  eib:
+    enabled: true
+    rss_url: "https://www.eib.org/en/about/jobs/index.rss"
+
 history:
   rolling_days: 30
   path: "outputs/history.json"

@@ -12,6 +12,7 @@ import yaml
 from .ingest.base import BaseIngester
 from .ingest.bis import BISIngester
 from .ingest.ecb import ECBIngester
+from .ingest.eib import EIBIngester
 from .ingest.novartis import NovartisIngester
 from .ingest.roche import RocheIngester
 from .ingest.sandoz import SandozIngester
@@ -38,6 +39,7 @@ INGESTERS: Dict[str, type[BaseIngester]] = {
     "roche": RocheIngester,
     "bis": BISIngester,
     "ecb": ECBIngester,
+    "eib": EIBIngester,
 }
 
 
