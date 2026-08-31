@@ -4,7 +4,12 @@
     <title>Swiss Jobs Tracker</title>
     <description>Daily job digests from top Swiss employers</description>
     <link>https://github.com</link>
-    <lastBuildDate>Mon, 24 Aug 2026 07:46:51 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 31 Aug 2026 14:31:08 +0000</lastBuildDate>
+    <item>
+      <title>Swiss Jobs Digest — 2026-08-31</title>
+      <link>2026-08-31.html</link>
+      <pubDate>2026-08-31</pubDate>
+    </item>
     <item>
       <title>Swiss Jobs Digest — 2026-08-24</title>
       <link>2026-08-24.html</link>
@@ -99,11 +104,6 @@
       <title>Swiss Jobs Digest — 2026-04-20</title>
       <link>2026-04-20.html</link>
       <pubDate>2026-04-20</pubDate>
-    </item>
-    <item>
-      <title>Swiss Jobs Digest — 2026-04-13</title>
-      <link>2026-04-13.html</link>
-      <pubDate>2026-04-13</pubDate>
     </item>
   </channel>
 </rss>
